@@ -66,8 +66,7 @@ function getStringFromTemplate(firstName, lastName) {
  *   'Hello, Chuck Norris!' => 'Chuck Norris'
  */
 function extractNameFromTemplate(value) {
-  const res = value.replace('!', '').split(' ');
-  return res[1] + res[2];
+  return value.replaceAll('Hello, ', '').replaceAll('!', '');
 }
 
 
@@ -161,8 +160,8 @@ function unbracketTag(str) {
  *   'Thunderstruck' => 'THUNDERSTRUCK'
  *  'abcdefghijklmnopqrstuvwxyz' => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
  */
-function convertToUpperCase(/* str */) {
-  throw new Error('Not implemented');
+function convertToUpperCase(str) {
+  return str.toUpperCase();
 }
 
 /**
@@ -207,8 +206,12 @@ function extractEmails(str) {
  *             '└──────────┘\n'
  *
  */
-function getRectangleString(/* width, height */) {
-  throw new Error('Not implemented');
+function getRectangleString(width, height) {
+  const top = `┌${'─'.repeat(width - 2)}┐\n`;
+  const center = `│${' '.repeat(width - 2)}│\n`.repeat(height - 2);
+  const bottom = `└${'─'.repeat(width - 2)}┘\n`;
+
+  return top + center + bottom;
 }
 
 
@@ -228,8 +231,36 @@ function getRectangleString(/* width, height */) {
  *    => 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm'
  *
  */
-function encodeToRot13(/* str */) {
-  throw new Error('Not implemented');
+function encodeToRot13(str) {
+  const LAST_UPPER_LETTER_CODE = 90;
+  const LAST_LOWER_LETTER_CODE = 122;
+
+  const HALF_SYMBOLS_ABC = 13;
+
+  const UPPER_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const LOWER_LETTERS = 'abcdefghijklmnopqrstuvwxyz';
+
+  let resultStr = '';
+  for (let i = 0; i < str.length; i += 1) {
+    const currentLetterCode = str[i].charCodeAt();
+
+    if (UPPER_LETTERS.includes(str[i])) {
+      if (LAST_UPPER_LETTER_CODE - currentLetterCode >= HALF_SYMBOLS_ABC) {
+        resultStr += String.fromCharCode(currentLetterCode + HALF_SYMBOLS_ABC);
+      } else {
+        resultStr += String.fromCharCode(currentLetterCode - HALF_SYMBOLS_ABC);
+      }
+    } else if (LOWER_LETTERS.includes(str[i])) {
+      if (LAST_LOWER_LETTER_CODE - currentLetterCode >= HALF_SYMBOLS_ABC) {
+        resultStr += String.fromCharCode(currentLetterCode + HALF_SYMBOLS_ABC);
+      } else {
+        resultStr += String.fromCharCode(currentLetterCode - HALF_SYMBOLS_ABC);
+      }
+    } else {
+      resultStr += str[i];
+    }
+  }
+  return resultStr;
 }
 
 /**
@@ -246,7 +277,13 @@ function encodeToRot13(/* str */) {
  *   isString(new String('test')) => true
  */
 function isString(value) {
-  return Boolean(typeof value === 'string');
+  if (Array.isArray(value)) {
+    return Boolean(value.length);
+  }
+  if (typeof value === 'object' && value !== null) {
+    return Boolean(Object.keys(value).length);
+  }
+  return Boolean(value);
 }
 
 
@@ -274,8 +311,26 @@ function isString(value) {
  *   'Q♠' => 50
  *   'K♠' => 51
  */
-function getCardId(/* value */) {
-  throw new Error('Not implemented');
+function getCardId(value) {
+  const suits = ['♣', '♦', '♥', '♠'];
+  const values = [
+    'A',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    'J',
+    'Q',
+    'K',
+  ];
+  const suitIndex = suits.indexOf(value.charAt(value.length - 1));
+  const rankIndex = values.indexOf(value.slice(0, -1));
+  return suitIndex * values.length + rankIndex;
 }
 
 
